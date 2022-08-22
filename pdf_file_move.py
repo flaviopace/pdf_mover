@@ -1,4 +1,5 @@
 import os
+import shutil
 
 startSearchPath = "."
 storePath = "./mesure.txt"
@@ -10,9 +11,6 @@ nameSubStr = [ [2,6], [10,12], [12,14] ]
 meseArray = { '01': 'Gennaio', '02': 'Febbraio', '03': 'Marzo', '04': 'Aprile', '05': 'Maggio',
          '06': 'Giugno', '07': 'Luglio', '08': 'Agosto', '09': 'Settembre', '10': 'Ottobre',
          '11': 'Novembre', '12': 'Dicembre'}
-
-filePrePattern = "PV_TRD_8226_51_"
-filePostPattern = "MEAS.txt"
 
 class FileSearch(object):
 
@@ -42,51 +40,6 @@ class FileSearch(object):
         print(self.fileList)
 
 
-class storeResult(object):
-
-    def __init__(self, array):
-        self.fileList = array
-        self.fileAndResult = {}
-
-    def getResult(self):
-        for fileIn in self.fileList:
-            print(fileIn)
-            try:
-                in_file = open(fileIn,"r")
-            except:
-                raise Exception ("Unable to read file")
-            #read only the number of the first line (deleting new line)
-            measureResult = in_file.readline().split(" ")#
-            print("Measure Result Value from file: {} is {}".format(fileIn , measureResult[1].rstrip()))
-            in_file.close()
-            # Store only the num
-            self.fileAndResult[fileIn] = measureResult[1].rstrip()
-
-        return self.fileAndResult
-
-    def calcOutputName(self, prepattern, postpattern):
-        ''' Starting from full file name, we have to understant the test case associated to result  '''
-        for key in self.fileAndResult.keys():
-            localList = []
-            ' get prefix index '
-            start =  key.rfind(prepattern)
-            start = start + len(prepattern)
-            ' get postfix index of '
-            end = key.rfind(postpattern)
-            ' compute Test name '
-            fileOutputName =  key[start:end]
-            ' new value list will have the name and the result'
-            localList.append(fileOutputName)
-            localList.append(self.fileAndResult.get(key))
-
-            self.fileAndResult[key] = localList
-
-        return self.fileAndResult
-
-    def printResult(self):
-        print(self.fileAndResult)
-
-
 def getCompanyDetails(inFile=dbCompanyFile):
     compDic = {}
     try:
@@ -100,6 +53,18 @@ def getCompanyDetails(inFile=dbCompanyFile):
             compDic[companyDetail[0]] = companyDetail[1].strip()
 
     return compDic
+
+def getDeafaultPath(inFile=outDirPathFile):
+
+    try:
+        f = open(inFile, "r")
+    except Exception as e:
+        print("Non riesco ad aprire il file {}  - {}", format(inFile, e))
+    for line in f:
+        if len(line.strip()):
+            return line
+        else:
+            return None
 
 def decodeFileName(fileName):
 
@@ -133,17 +98,23 @@ if __name__ == "__main__":
         mese = fileInfo[1]
         meseNome = meseArray[mese]
         anno = fileInfo[2]
+        annoFull = "20" + anno
         print("Cliente ID: \t{}".format(clienteID))
         print("Cliente Nome: \t{}".format(clienteName))
         print("Mese : \t\t\t{}-{}".format(mese, meseNome))
         print("Anno : \t\t\t{}".format(anno))
-        newFileName = mese + " " + meseNome + " 20" + anno + ".pdf"
+        newFileName = mese + " " + meseNome + " " + annoFull + ".pdf"
         print("Nuovo File: \t{}".format(newFileName))
-
+        basePath = getDeafaultPath()
+        if basePath:
+            newPath = os.path.join(getDeafaultPath(), clienteName, "LAVORO", "BUSTE PAGA", annoFull)
+            print("Nuovo Path: \t{}".format(newPath))
+            if not os.path.isdir(newPath):
+                os.makedirs(newPath)
+            newFullName =  os.path.join(newPath, newFileName)
+            print("Sto copiando il file {} in {}".format(file, newFullName))
+            shutil.copy(file, newFullName)
+        else:
+            print("Non ho trovato un base patch valido!!")
         print("-------------")
 
-    #r = storeResult(v)
-    #dic = r.getResult()
-    #r.printResult()
-    #dic = r.calcOutputName(filePrePattern, filePostPattern)
-    #r.printResult()
