@@ -5,7 +5,11 @@ storePath = "./mesure.txt"
 pattern = ".pdf"
 dbCompanyFile = "TransFileDatabase.csv"
 outDirPathFile = "TransFilesDropBox.txt"
-nameSubStr = [[0,2], [2,6], [10,12], [12,14]]
+nameSubStr = [ [2,6], [10,12], [12,14] ]
+
+meseArray = { '01': 'Gennaio', '02': 'Febbraio', '03': 'Marzo', '04': 'Aprile', '05': 'Maggio',
+         '06': 'Giugno', '07': 'Luglio', '08': 'Agosto', '09': 'Settembre', '10': 'Ottobre',
+         '11': 'Novembre', '12': 'Dicembre'}
 
 filePrePattern = "PV_TRD_8226_51_"
 filePostPattern = "MEAS.txt"
@@ -92,20 +96,19 @@ def getCompanyDetails(inFile=dbCompanyFile):
     for line in f:
         if len(line.strip()):
             companyDetail = line.split(",")
+            # key = ID, Value = Nome Azienda
             compDic[companyDetail[0]] = companyDetail[1].strip()
 
     return compDic
 
 def decodeFileName(fileName):
 
-    print(fileName)
+    print("Sto processando il file: {}".format(fileName))
     basename = os.path.basename(fileName)
-
+    fileDetails =[]
     for sub in nameSubStr:
-        print(sub)
-        print(basename[sub[0]:sub[1]])
-        print('----')
-
+        fileDetails.append(basename[sub[0]:sub[1]])
+    return fileDetails;
 
 if __name__ == "__main__":
     print("Scansione della Dir: \t {}".format(startSearchPath))
@@ -119,7 +122,25 @@ if __name__ == "__main__":
     print(dic)
 
     for file in v:
-        decodeFileName(file)
+        fileInfo = decodeFileName(file)
+        clienteID = fileInfo[0]
+        if clienteID in dic.keys():
+            clienteName = dic[clienteID]
+        else:
+            clienteName = None
+            print("Cliente ID {} non trovato!!".format(clienteID))
+            continue
+        mese = fileInfo[1]
+        meseNome = meseArray[mese]
+        anno = fileInfo[2]
+        print("Cliente ID: \t{}".format(clienteID))
+        print("Cliente Nome: \t{}".format(clienteName))
+        print("Mese : \t\t\t{}-{}".format(mese, meseNome))
+        print("Anno : \t\t\t{}".format(anno))
+        newFileName = mese + " " + meseNome + " 20" + anno + ".pdf"
+        print("Nuovo File: \t{}".format(newFileName))
+
+        print("-------------")
 
     #r = storeResult(v)
     #dic = r.getResult()
