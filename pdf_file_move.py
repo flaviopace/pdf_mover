@@ -3,6 +3,10 @@ import os
 startSearchPath = "."
 storePath = "./mesure.txt"
 pattern = ".pdf"
+dbCompanyFile = "TransFileDatabase.csv"
+outDirPathFile = "TransFilesDropBox.txt"
+nameSubStr = [[0,2], [2,6], [10,12], [12,14]]
+
 filePrePattern = "PV_TRD_8226_51_"
 filePostPattern = "MEAS.txt"
 
@@ -22,7 +26,7 @@ class FileSearch(object):
                 #select file that ends with desired pattern
                 if file.endswith(self.pattern):
                     fileIn = os.path.join(root, file)
-                    print("Trovato file: {}".format(fileIn))
+                    #print("Trovato file: {}".format(fileIn))
                     self.fileList.append(fileIn)
 
         if not self.fileList:
@@ -78,12 +82,44 @@ class storeResult(object):
     def printResult(self):
         print(self.fileAndResult)
 
+
+def getCompanyDetails(inFile=dbCompanyFile):
+    compDic = {}
+    try:
+        f = open(inFile, "r")
+    except Exception as e:
+        print("Non riesco ad aprire il file {}  - {}", format(inFile, e))
+    for line in f:
+        if len(line.strip()):
+            companyDetail = line.split(",")
+            compDic[companyDetail[0]] = companyDetail[1].strip()
+
+    return compDic
+
+def decodeFileName(fileName):
+
+    print(fileName)
+    basename = os.path.basename(fileName)
+
+    for sub in nameSubStr:
+        print(sub)
+        print(basename[sub[0]:sub[1]])
+        print('----')
+
+
 if __name__ == "__main__":
-    print("Starting parsing Measure files from path: \t %s".format(startSearchPath))
-    print("File Search Pattern: \t {}".format(pattern))
+    print("Scansione della Dir: \t {}".format(startSearchPath))
+    print("File Pattern: \t {}".format(pattern))
     files = FileSearch(startSearchPath, pattern)
     v = files.getFileList()
     files.printList()
+
+    dic = getCompanyDetails()
+
+    print(dic)
+
+    for file in v:
+        decodeFileName(file)
 
     #r = storeResult(v)
     #dic = r.getResult()
