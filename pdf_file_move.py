@@ -3,7 +3,8 @@ import shutil
 
 startSearchPath = "."
 storePath = "./mesure.txt"
-pattern = ".pdf"
+pattern_end = ".pdf"
+pattern_start = "PG"
 dbCompanyFile = "TransFileDatabase.csv"
 outDirPathFile = "TransFilesDropBox.txt"
 nameSubStr = [ [2,6], [10,12], [12,14] ]
@@ -14,10 +15,11 @@ meseArray = { '01': 'Gennaio', '02': 'Febbraio', '03': 'Marzo', '04': 'Aprile', 
 
 class FileSearch(object):
 
-    def __init__(self, filepath, pattern):
+    def __init__(self, filepath, pattern_start, pattern_end):
         ''' We have to define some variable for computation '''
         self.startSearchPath = filepath
-        self.pattern = pattern
+        self.pattern_start = pattern_start
+        self.pattern_end = pattern_end
         self.fileList = []
 
     def getFileList(self):
@@ -26,7 +28,7 @@ class FileSearch(object):
             # for each file found
             for file in files:
                 #select file that ends with desired pattern
-                if file.endswith(self.pattern):
+                if file.startswith(self.pattern_start) and file.endswith(self.pattern_end):
                     fileIn = os.path.join(root, file)
                     #print("Trovato file: {}".format(fileIn))
                     self.fileList.append(fileIn)
@@ -77,8 +79,8 @@ def decodeFileName(fileName):
 
 if __name__ == "__main__":
     print("Scansione della Dir: \t {}".format(startSearchPath))
-    print("File Pattern: \t {}".format(pattern))
-    files = FileSearch(startSearchPath, pattern)
+    print("File Pattern: \t {} * {}".format(pattern_start, pattern_end))
+    files = FileSearch(startSearchPath, pattern_start, pattern_end)
     v = files.getFileList()
     files.printList()
 
