@@ -4,7 +4,7 @@ import shutil
 startSearchPath = "."
 storePath = "./mesure.txt"
 pattern_end = ".pdf"
-pattern_start = "PG"
+pattern_start = "pg"
 dbCompanyFile = "TransFileDatabase.csv"
 outDirPathFile = "TransFilesDropBox.txt"
 nameSubStr = [ [2,6], [10,12], [12,14] ]
@@ -28,7 +28,7 @@ class FileSearch(object):
             # for each file found
             for file in files:
                 #select file that ends with desired pattern
-                if file.startswith(self.pattern_start) and file.endswith(self.pattern_end):
+                if file.lower().startswith(self.pattern_start) and file.lower().endswith(self.pattern_end):
                     fileIn = os.path.join(root, file)
                     #print("Trovato file: {}".format(fileIn))
                     self.fileList.append(fileIn)
