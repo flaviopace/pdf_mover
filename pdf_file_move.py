@@ -78,7 +78,7 @@ def decodeFileName(fileName):
     # 10-12 -> Mese
     fileDetails.append(basename[namelen-4:namelen-2])
     # 12-14 -> Anno
-    fileDetails.append(basename[namelen-1:namelen])
+    fileDetails.append(basename[namelen-2:namelen])
     return fileDetails;
 
 if __name__ == "__main__":
