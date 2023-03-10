@@ -7,7 +7,6 @@ pattern_end = ".pdf"
 pattern_start = "pg"
 dbCompanyFile = "TransFileDatabase.csv"
 outDirPathFile = "TransFilesDropBox.txt"
-nameSubStr = [ [2,6], [10,12], [12,14] ]
 
 meseArray = { '01': 'Gennaio', '02': 'Febbraio', '03': 'Marzo', '04': 'Aprile', '05': 'Maggio',
          '06': 'Giugno', '07': 'Luglio', '08': 'Agosto', '09': 'Settembre', '10': 'Ottobre',
@@ -73,8 +72,13 @@ def decodeFileName(fileName):
     print("Sto processando il file: {}".format(fileName))
     basename = os.path.basename(fileName)
     fileDetails =[]
-    for sub in nameSubStr:
-        fileDetails.append(basename[sub[0]:sub[1]])
+    # 2-6 -> Client ID
+    fileDetails.append(basename[2:6])
+    namelen = len(basename.split(".")[0])
+    # 10-12 -> Mese
+    fileDetails.append(basename[namelen-4:namelen-2])
+    # 12-14 -> Anno
+    fileDetails.append(basename[namelen-1:namelen])
     return fileDetails;
 
 if __name__ == "__main__":
