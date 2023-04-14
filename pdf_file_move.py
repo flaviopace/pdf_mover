@@ -4,11 +4,12 @@ import shutil
 startSearchPath = "."
 storePath = "./mesure.txt"
 pattern_end = ".pdf"
-pattern_start = "pg"
+busta_start = "pg"
+cu_start = 'cu'
 dbCompanyFile = "TransFileDatabase.csv"
 outDirPathFile = "TransFilesDropBox.txt"
 
-meseArray = { '01': 'Gennaio', '02': 'Febbraio', '03': 'Marzo', '04': 'Aprile', '05': 'Maggio',
+meseArray = { '00': 'CU', '01': 'Gennaio', '02': 'Febbraio', '03': 'Marzo', '04': 'Aprile', '05': 'Maggio',
          '06': 'Giugno', '07': 'Luglio', '08': 'Agosto', '09': 'Settembre', '10': 'Ottobre',
          '11': 'Novembre', '12': 'Dicembre'}
 
@@ -83,16 +84,22 @@ def decodeFileName(fileName):
 
 if __name__ == "__main__":
     print("Scansione della Dir: \t {}".format(startSearchPath))
-    print("File Pattern: \t {} * {}".format(pattern_start, pattern_end))
-    files = FileSearch(startSearchPath, pattern_start, pattern_end)
-    v = files.getFileList()
-    files.printList()
+    print("File Pattern: \t {} * {}".format(busta_start, pattern_end))
+    buste = FileSearch(startSearchPath, busta_start, pattern_end)
+    buste_list = buste.getFileList()
+    buste.printList()
 
+    print("File Pattern: \t {} * {}".format(cu_start, pattern_end))
+    cu = FileSearch(startSearchPath, cu_start, pattern_end)
+    cu_list = cu.getFileList()
+    cu.printList()
+
+    all_files = buste_list + cu_list
     dic = getCompanyDetails()
 
     print(dic)
 
-    for file in v:
+    for file in all_files:
         fileInfo = decodeFileName(file)
         clienteID = fileInfo[0]
         if clienteID in dic.keys():
@@ -113,7 +120,10 @@ if __name__ == "__main__":
         print("Nuovo File: \t{}".format(newFileName))
         basePath = getDeafaultPath()
         if basePath:
-            newPath = os.path.join(getDeafaultPath(), clienteName, "LAVORO", "BUSTE PAGA", annoFull)
+            if busta_start in file.lower():
+                newPath = os.path.join(getDeafaultPath(), clienteName, "LAVORO", "BUSTE PAGA", annoFull)
+            else:
+                newPath = os.path.join(getDeafaultPath(), clienteName, "LAVORO", "CERTIFICAZIONE UNICA", annoFull)
             print("Nuovo Path: \t{}".format(newPath))
             if not os.path.isdir(newPath):
                 os.makedirs(newPath)
