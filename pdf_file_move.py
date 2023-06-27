@@ -91,8 +91,13 @@ if __name__ == "__main__":
 
     print("File Pattern: \t {} * {}".format(cu_start, pattern_end))
     cu = FileSearch(startSearchPath, cu_start, pattern_end)
-    cu_list = cu.getFileList()
-    cu.printList()
+    cu_list = []
+    try:
+        cu_list = cu.getFileList()
+        cu.printList()
+    except:
+        print("No cu *.pdf found")
+        pass
 
     all_files = buste_list + cu_list
     dic = getCompanyDetails()
