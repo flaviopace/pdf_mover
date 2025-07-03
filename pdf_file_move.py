@@ -80,6 +80,9 @@ def decodeFileName(fileName):
     fileDetails.append(basename[namelen-4:namelen-2])
     # 12-14 -> Anno
     fileDetails.append(basename[namelen-2:namelen])
+    # 9-10 succursale
+    fileDetails.append(basename[namelen-5:namelen-4])
+
     return fileDetails;
 
 if __name__ == "__main__":
@@ -117,11 +120,17 @@ if __name__ == "__main__":
         meseNome = meseArray[mese]
         anno = fileInfo[2]
         annoFull = "20" + anno
+        succursale = fileInfo[3]
         print("Cliente ID: \t{}".format(clienteID))
         print("Cliente Nome: \t{}".format(clienteName))
         print("Mese : \t\t\t{}-{}".format(mese, meseNome))
         print("Anno : \t\t\t{}".format(anno))
-        newFileName = mese + " " + meseNome + " " + annoFull + ".pdf"
+        print("Succursale : \t\t{}".format(succursale))
+        newFileName = mese + " " + meseNome + " " + annoFull
+        if int(succursale) != 0:
+            newFileName += " (" + succursale + ").pdf"
+        else:
+            newFileName += ".pdf"
         print("Nuovo File: \t{}".format(newFileName))
         basePath = getDeafaultPath()
         if basePath:
